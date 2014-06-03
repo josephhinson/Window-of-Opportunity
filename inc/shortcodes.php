@@ -20,14 +20,16 @@ function ot_countdown_timer($atts) {
 			$email = $output['e'];			
 		}
 		$retval = $api->listMemberInfo( $listId, array($email) );
-//		$date = strtotime();
-//		$date = strtotime($date +  $ot_wop_settings['days_close'] .' days');
+		// let's build a date variable for right now
 		$now = new DateTime('NOW');
-//		print_r($now);
-//		$now = new DateTime('2014-05-12 18:23:37');
-		$signedup = new DateTime($retval['data'][0]['timestamp']);
+	
+		// start building the date variable for the day the window closes		
 		$windowCloses = new DateTime($retval['data'][0]['timestamp']);
+		// which means you need to take the variable from the previous line, and add the amount of days to it.
 		$windowCloses->add(new DateInterval( "P".$ot_wop_settings['days_close']."D" ));
+		date_timezone_set($windowCloses, timezone_open('America/New_York'));
+		$windowCloses->setTime(22, 00);
+		// now that we have the window closes -- let's get the exact day...
 //		print_r($windowCloses);
 
 		$timeRemaining = $now->diff($windowCloses);
