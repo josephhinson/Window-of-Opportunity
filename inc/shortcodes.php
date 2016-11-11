@@ -17,13 +17,13 @@ function ot_countdown_timer($atts) {
 		} elseif ($output['EMAIL']) {
 			$email = $output['EMAIL'];
 		} elseif ($output['e']) {
-			$email = $output['e'];			
+			$email = $output['e'];
 		}
 		$retval = $api->listMemberInfo( $listId, array($email) );
 		// let's build a date variable for right now
 		$now = new DateTime('NOW');
-	
-		// start building the date variable for the day the window closes		
+
+		// start building the date variable for the day the window closes
 		$windowCloses = new DateTime($retval['data'][0]['timestamp']);
 		// which means you need to take the variable from the previous line, and add the amount of days to it.
 		$windowCloses->add(new DateInterval( "P".$ot_wop_settings['days_close']."D" ));
@@ -33,13 +33,13 @@ function ot_countdown_timer($atts) {
 //		print_r($windowCloses);
 
 		$timeRemaining = $now->diff($windowCloses);
-		
+
 //		print_r($timeRemaining);
 		$days = '+'.$timeRemaining->format("%d").'d';
 		$hours = '+'.$timeRemaining->format("%H").'h';
 		$minutes = '+'.$timeRemaining->format("%i").'m';
 		$seconds = '+'.$timeRemaining->format("%s");
-// 	Uncomment this stuff to debug!		
+// 	Uncomment this stuff to debug!
 //		print_r($difference);
 //		print_r($date);
 // if the email address is not provided...don't show anything
@@ -65,7 +65,7 @@ function ot_countdown_timer($atts) {
   			  background: #000;
   			  background-image: -webkit-linear-gradient(top, #000 0%, #686868 50%, #000 50%, #535050 100%);
    			  background-image: -moz-linear-gradient(top, #000 0%, #686868 50%, #000 50%, #535050 100%);
-   			  background-image: linear-gradient(top, #000 0%, #686868 50%, #000 50%, #535050 100%);			  
+   			  background-image: linear-gradient(top, #000 0%, #686868 50%, #000 50%, #535050 100%);
   			  color: #fff;
 			  font-size: 44px;
 			  text-align: center;

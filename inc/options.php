@@ -1,4 +1,4 @@
-<?php	
+<?php
 require_once( trailingslashit( plugin_dir_path( __FILE__ ) ) . '/settings_callbacks.php' );
 require_once( trailingslashit( plugin_dir_path( __FILE__ ) ) . '/mcapi/MCAPI.class.php' );
 class OT_WOP_Settings {
@@ -22,16 +22,6 @@ class OT_WOP_Settings {
 		$ot_wop_settings = (array)get_option('ot_wop_settings');
 		register_setting( 'ot_wop', 'ot-plugin-validation' );
 		register_setting( 'ot_wop', 'ot_wop_settings');
-	    add_settings_section( 'section-one', 'Registration Info', array($this, 'section_one_callback'), 'ot_wop' );
-		// adding the Username Field
-		add_settings_field( 'user', 'Username', array('OTS_Framework','ots_text_input'), 'ot_wop', 'section-one', array(
-		    'name' => 'ot-plugin-validation[user]',
-		    'value' => $userinfo['user'],
-		) );
-		add_settings_field( 'email', 'Email', array('OTS_Framework','ots_text_input'), 'ot_wop', 'section-one', array(
-		    'name' => 'ot-plugin-validation[email]',
-		    'value' => $userinfo['email'],
-		) );
 		// Begin section two here
 	    add_settings_section( 'section-two', 'Page Settings', array($this, 'section_two_callback'), 'ot_wop' );
 
@@ -67,7 +57,7 @@ class OT_WOP_Settings {
 			'help' => '<small>Days after signup, window closes</small>',
 			'default' => '',
 		) );
-		
+
 			add_settings_section( 'section-three', 'Mailchimp Connection Details', array($this, 'section_three_callback'), 'ot_wop' );
 			add_settings_field( 'api_key', 'Enter your API Key', array('OTS_Framework','ots_text_input'), 'ot_wop', 'section-three', array(
 				'name' => 'ot_wop_settings[api_key]',
@@ -115,7 +105,7 @@ class OT_WOP_Settings {
 		<small>You can also use ?email, or ?EMAIL if you prefer, but ?e= keeps the url shorter.</small></p>
 		<?php
 	}
-	
+
 	function ots_ISapp_name() {
 		$ot_wop_settings = (array)get_option('ot_wop_settings'); ?>
 			<input type="text" name="ot_wop_settings[is_app_name]" value="<?php echo $ot_wop_settings['is_app_name']; ?>" id="is_app_name"><br>
@@ -138,10 +128,10 @@ class OT_WOP_Settings {
 			<?php } // end for ?>
 			</select><br>
 			<?php
-		} 
+		}
 	}
 	function options_page() {
-	?>	
+	?>
 	    <div class="wrap">
 	        <h2>Out:think Window of Opportunity Options</h2>
 	        <form action="options.php" method="POST">
@@ -155,7 +145,7 @@ class OT_WOP_Settings {
 	public function active() {
 		/* get wp version */
 		global $wp_version;
-		$otpu =  new OT_Plugin_Updater();		
+		$otpu =  new OT_Plugin_Updater();
 		$updater_data =$otpu->updater->updater_data();
 
 		/* get current domain */
