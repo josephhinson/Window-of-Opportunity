@@ -45,16 +45,10 @@ class OT_WOP_Settings {
 		 * ots_number() function accepts arguments as array:
 		* 'name', 'title', 'value', 'help';
 		*/
-		add_settings_field( 'days_open', 'Start day (after subscribing)', array('OTS_Framework','ots_number'), 'ot_wop', 'section-two', array(
-		    'name' => 'ot_wop_settings[days_open]',
-		    'value' => $ot_wop_settings['days_open'],
-			'help' => '<small>Days after signup, window opens</small>',
-			'default' => ''
-		) );
-		add_settings_field( 'days_close', 'End Day (after subscribing)', array('OTS_Framework','ots_number'), 'ot_wop', 'section-two', array(
+		add_settings_field( 'days_close', 'Window Closes', array('OTS_Framework','ots_number'), 'ot_wop', 'section-two', array(
 		    'name' => 'ot_wop_settings[days_close]',
 		    'value' => $ot_wop_settings['days_close'],
-			'help' => '<small>Days after signup, window closes</small>',
+			'help' => '<small>Days after signup</small>',
 			'default' => '',
 		) );
 
