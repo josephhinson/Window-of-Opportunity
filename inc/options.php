@@ -23,23 +23,17 @@ class OT_WOP_Settings {
 		register_setting( 'ot_wop', 'ot-plugin-validation' );
 		register_setting( 'ot_wop', 'ot_wop_settings');
 		// Begin section two here
-	    add_settings_section( 'section-two', 'Page Settings', array($this, 'section_two_callback'), 'ot_wop' );
+	    add_settings_section( 'section-two', 'Plugin Settings', array($this, 'section_two_callback'), 'ot_wop' );
 
-		/**
+		/**f
 		* ots_page_dropdown() creates a page dropdown select field accepts parameters as array
 		* 'name', 'title', 'value', 'help';
 		*/
-		add_settings_field( 'offered_page', 'Page to offer', array('OTS_Framework', 'ots_page_dropdown'), 'ot_wop', 'section-two', array(
-			'title' => 'Select the page to protect',
-		    'name' => 'ot_wop_settings[offered_page]',
-		    'value' => $ot_wop_settings['offered_page'],
-			'help' => '<small>Page where exclusive, time-sensitive content will be seen</small>'
-		) );
-		add_settings_field( 'fallback_page', 'Default Page', array('OTS_Framework','ots_page_dropdown'), 'ot_wop', 'section-two', array(
-			'title' => 'Select the redirect landing page',
-		    'name' => 'ot_wop_settings[fallback_page]',
-		    'value' => $ot_wop_settings['fallback_page'],
-			'help' => '<small>Page to be shown to users</small>'
+		add_settings_field( 'campaign_url', 'Campaign URL', array('OTS_Framework', 'ots_text_input'), 'ot_wop', 'section-two', array(
+			'title' => 'Enter your Analytics Campaign URL',
+		    'name' => 'ot_wop_settings[campaign_url]',
+		    'value' => $ot_wop_settings['campaign_url'],
+			'help' => '<small>Campaign URL for tracking purposes</small>'
 		) );
 		/*
 		 * ots_number() function accepts arguments as array:
@@ -65,10 +59,6 @@ class OT_WOP_Settings {
 			endif;
 			add_settings_section( 'section-four', 'How to use this plugin:', array($this, 'section_four_callback'), 'ot_wop' );
 	}
-	function section_one_callback() { ?>
-		<p>Enter your Out:think Group username and email to enable automatic updates of this plugin.</p>
-		<?php
-	}
 	function section_two_callback() { ?>
 		<p>Please configure your plugin below.</p>
 		<?php
@@ -90,13 +80,13 @@ class OT_WOP_Settings {
 		<p>Copy and paste the link from the fields below:</p>
 		<p>
 			<label><strong>HTML link to be inserted into campaigns:</strong></label><br />
-			<textarea rows="2" onclick="this.select();"><a href="<?php echo get_permalink($ot_wop_settings['offered_page']); ?>?e=*|EMAIL|*">Click here for your limited time offer.</a></textarea>
+			<textarea rows="2" onclick="this.select();"><a href="<?php echo get_bloginfo(url); ?>?e=*|EMAIL|*&d=<?php echo $ot_wop_settings['days_close']; ?>">Click here for your limited time offer.</a></textarea>
 		</p>
 		<p>
 			<label><strong>Direct URL</strong></label><br />
-			<textarea rows="1" onclick="this.select();"><?php echo get_permalink($ot_wop_settings['offered_page']); ?>?e=*|EMAIL|*</textarea>
+			<textarea rows="1" onclick="this.select();"><?php echo get_bloginfo(url); ?>?e=*|EMAIL|*&d=<?php echo $ot_wop_settings['days_close']; ?></textarea>
 		<br />
-		<small>You can also use ?email, or ?EMAIL if you prefer, but ?e= keeps the url shorter.</small></p>
+		<small>You can also use ?email, or ?EMAIL if you prefer, but ?e= keeps the url shorter. You may remove the ?d= part of the URL if you choose, it will default to the number set under "Window Closes"</small></p>
 		<?php
 	}
 
