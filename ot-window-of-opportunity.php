@@ -9,6 +9,7 @@ Author URI: http://outthinkgroup.com/wop
 */
 
 require_once( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'inc/options.php' );
+include('mcapi/MailChimp.php');
 include 'inc/shortcodes.php';
 define('OTWINDOWCOOKIE', '_owt');
 
@@ -45,15 +46,22 @@ function ot_wop_protected_page_redirect() {
 	$tid = get_the_ID();
 	$ot_wop_settings = get_option('ot_wop_settings');
 		define( 'DONOTCACHEPAGE', 1 );
-		require_once('inc/mcapi/MCAPI.class.php');
+		//use \DrewM\MailChimp\MailChimp;
 		$apiKey = $ot_wop_settings['api_key'];
-		$api = new MCAPI($apiKey);
+		$MailChimp = new MailChimp($apiKey);
+		//$api = new MCAPI($apiKey);
 		$listId = $ot_wop_settings['mc_list_id'];
 		$return = otw_parse_string();
 		$days = $return['days'];
 		$email = $return['email'];
-		$retval = $api->listMemberInfo( $listId, array($email) );
-		$date = strtotime($retval['data'][0]['timestamp']);
+		// new mailchimp 3.0 API wrapper
+		$subscriber_hash = $MailChimp->subscriberHash( $email );
+		$subscriberURL = "/lists/$listId/members/$subscriber_hash";
+		$retval = $MailChimp->get($subscriberURL);
+		// print_r($retval);
+		// echo $retval['timestamp_opt'];
+		//$retval = $api->listMemberInfo( $listId, array($email) );
+		$date = strtotime($retval['timestamp_opt']);
 		$date = strtotime($days, $date);
 		$date = date('F j, Y', $date);
 		if (isset($_COOKIE[OTWINDOWCOOKIE]) or $retval) {
@@ -63,7 +71,7 @@ function ot_wop_protected_page_redirect() {
 					'OTW' => $date
 				);
 				//print_r($merge_vars);
-				$addMergeVar = $api->listUpdateMember($listId, $email, $merge_vars, 'html', true);
+				//$addMergeVar = $api->listUpdateMember($listId, $email, $merge_vars, 'html', true);
 			//	var_dump($addMergeVar);
 			//	echo 'There is no cookie loaded.<br>
 			//	<img src="http://outthinkgroup.com/countdown/gif_white.php?time='.$date.'">';
