@@ -8,7 +8,8 @@ Version: 1.0
 Author URI: http://outthinkgroup.com/wop
 */
 
-require_once( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'inc/options.php' );
+define('OTW_PLUGINPATH', trailingslashit( plugin_dir_path( __FILE__ ) ) );
+require_once( OTW_PLUGINPATH . 'inc/options.php' );
 include('mcapi/MailChimp.php');
 include 'inc/shortcodes.php';
 define('OTWINDOWCOOKIE', '_owt');

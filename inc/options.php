@@ -1,6 +1,8 @@
 <?php
-require_once( trailingslashit( plugin_dir_path( __FILE__ ) ) . '/settings_callbacks.php' );
-require_once( trailingslashit( plugin_dir_path( __FILE__ ) ) . '/mcapi/MCAPI.class.php' );
+require_once( OTW_PLUGINPATH . '/inc/settings_callbacks.php' );
+require_once( OTW_PLUGINPATH . '/inc/mcapi/MCAPI.class.php' );
+//require_once(OTW_PLUGINPATH . '/mcapi/MailChimp.php');
+
 class OT_WOP_Settings {
 
 	public function __construct() {
@@ -108,21 +110,25 @@ class OT_WOP_Settings {
 	function ots_mc_listselect($args) {
 		$apiKey = $args['apikey'];
 		$listID = $args['value'];
-		$api = new MCAPI($apiKey);
-		$retval = $api->lists();
+		$MailChimp = new MailChimp($apiKey);
+		$listData = $MailChimp->get("/lists");
+		//print_r($listData['lists']);
+		//$api = new MCAPI($apiKey);
+		//$retval = $api->lists();
 	//	print_r($retval);
-		if ($api->errorCode){
+		if ($MailChimp->errorCode){
 			echo "Unable to load lists! ";
-			echo $api->errorMessage;
+			echo $MailChimp->errorMessage;
 		} else { ?>
 			<select name="ot_wop_settings[mc_list_id]" id="listID">
 			<?php
-				foreach ($retval['data'] as $list) { ?>
+				foreach ($listData['lists'] as $list) { ?>
 				<option value="<?php echo $list['id']; ?>"<?php if ($listID == $list['id']): ?> selected="selected"<?php endif; ?>><?php echo $list['name']. ' (' . $list['stats']['member_count'].' subs)'; ?></option>
 			<?php } // end for ?>
 			</select><br>
 			<?php
 		}
+
 	}
 	function options_page() {
 	?>
