@@ -19,11 +19,7 @@ function otw_parse_string() {
 	$str = $_SERVER['QUERY_STRING'];
 	parse_str($str, $output);
 	//var_dump($output);
-	if ($output['email']) {
-		$email = $output['email'];
-	} elseif ($output['EMAIL']) {
-		$email = $output['EMAIL'];
-	} elseif ($output['e']) {
+	if ($output['e']) {
 		$email = $output['e'];
 	}
 	$return = array();
@@ -48,40 +44,44 @@ function ot_wop_protected_page_redirect() {
 	$ot_wop_settings = get_option('ot_wop_settings');
 		define( 'DONOTCACHEPAGE', 1 );
 		//use \DrewM\MailChimp\MailChimp;
-		$apiKey = $ot_wop_settings['api_key'];
-		$MailChimp = new MailChimp($apiKey);
-		//$api = new MCAPI($apiKey);
-		$listId = $ot_wop_settings['mc_list_id'];
-		$return = otw_parse_string();
-		$days = $return['days'];
-		$email = $return['email'];
-		// new mailchimp 3.0 API wrapper
-		$subscriber_hash = $MailChimp->subscriberHash( $email );
-		$subscriberURL = "/lists/$listId/members/$subscriber_hash";
-		$retval = $MailChimp->get($subscriberURL);
-		// print_r($retval);
-		// echo $retval['timestamp_opt'];
-		//$retval = $api->listMemberInfo( $listId, array($email) );
-		$date = strtotime($retval['timestamp_opt']);
-		$date = strtotime($days, $date);
-		$date = date('F j, Y', $date);
-		if (isset($_COOKIE[OTWINDOWCOOKIE]) or $retval) {
-			if (!isset($_COOKIE[OTWINDOWCOOKIE])) {
-				setcookie(OTWINDOWCOOKIE, $date, strtotime( '+180 days' ), '/');
-				$merge_vars = array(
-					'OTW' => $date
-				);
-				//print_r($merge_vars);
-				//$addMergeVar = $api->listUpdateMember($listId, $email, $merge_vars, 'html', true);
-			//	var_dump($addMergeVar);
-			//	echo 'There is no cookie loaded.<br>
-			//	<img src="http://outthinkgroup.com/countdown/gif_white.php?time='.$date.'">';
-			} else {
-				$date = $_COOKIE[OTWINDOWCOOKIE];
-			//	echo 'There is a cookie loaded.<br>';
-			//	echo '<img src="http://outthinkgroup.com/countdown/gif_white.php?time='.$date.'">';
+		if ( is_array(otw_parse_string()) ) {
+			$apiKey = $ot_wop_settings['api_key'];
+			$MailChimp = new MailChimp($apiKey);
+			//$api = new MCAPI($apiKey);
+			$listId = $ot_wop_settings['mc_list_id'];
+			$return = otw_parse_string();
+			$days = $return['days'];
+			$email = $return['email'];
+			// new mailchimp 3.0 API wrapper
+			$subscriber_hash = $MailChimp->subscriberHash( $email );
+			$subscriberString = "/lists/$listId/members/$subscriber_hash";
+			$retval = $MailChimp->get($subscriberString);
+			// print_r($retval);
+			// echo $retval['timestamp_opt'];
+			//$retval = $api->listMemberInfo( $listId, array($email) );
+			$date = strtotime($retval['timestamp_opt']);
+			$date = strtotime($days, $date);
+			$date = date('F j, Y', $date);
+			if (isset($_COOKIE[OTWINDOWCOOKIE]) or $retval) {
+				if (!isset($_COOKIE[OTWINDOWCOOKIE])) {
+					setcookie(OTWINDOWCOOKIE, $date, strtotime( '+180 days' ), '/');
+					$merge_vars = array(
+						'OTW' => $date
+					);
+					//print_r($merge_vars);
+					//$addMergeVar = $api->listUpdateMember($listId, $email, $merge_vars, 'html', true);
+				//	var_dump($addMergeVar);
+				//	echo 'There is no cookie loaded.<br>
+				//	<img src="http://outthinkgroup.com/countdown/gif_white.php?time='.$date.'">';
+				} else {
+					$date = $_COOKIE[OTWINDOWCOOKIE];
+				//	echo 'There is a cookie loaded.<br>';
+				//	echo '<img src="http://outthinkgroup.com/countdown/gif_white.php?time='.$date.'">';
+				}
 			}
 		}
+
+
 //		$datetime1 = new DateTime($retval['data'][0]['timestamp']);
 		//var_dump($retval);
 		//echo 'signed up: ' . $retval['data'][0]['timestamp'] .'<br>';
@@ -94,13 +94,14 @@ function ot_wop_protected_page_redirect() {
 //		} else {
 //	        wp_redirect( get_permalink($ot_wop_settings['fallback_page']) );
 //		}
-	wp_redirect( get_permalink($tid) );
-	//exit;
+	$campaign_url = $ot_wop_settings['campaign_url'];
+	wp_redirect( get_permalink($post->ID) . $campaign_url);
+	exit;
 }
-add_action( 'init', 'ot_wop_protected_page_redirect' );
+add_action( 'template_redirect', 'ot_wop_protected_page_redirect' );
 
 function otw_window_open() {
-	if (otw_parse_string() or ($_COOKIE[OTWINDOWCOOKIE] && strtotime($_COOKIE[OTWINDOWCOOKIE]) > strtotime(today)) ) {
+	if ( $_COOKIE[OTWINDOWCOOKIE] && strtotime($_COOKIE[OTWINDOWCOOKIE]) > strtotime(today) ) {
 		return true;
 	} else {
 		return false;
